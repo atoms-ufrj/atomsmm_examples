@@ -51,14 +51,18 @@ simulation = openmm.app.Simulation(pdb.topology, solvation_system, integrator, p
 simulation.context.setPositions(pdb.positions)
 simulation.context.setVelocitiesToTemperature(temp)
 
-parameterStates = pd.read_csv(f'{base}.states', sep='\s+', comment='#')
-for state in reversed(parameterStates.index):
-    for name, value in parameterStates.iloc[state].items():
-        simulation.context.setParameter(name, value)
-    dataReporter = atomsmm.ExtendedStateDataReporter(stdout, reportInterval, separator=',',
-        step=True, potentialEnergy=True, temperature=True, density=barostatInterval > 0,
-        speed=True, extraFile=f'{base}_data-{state:02d}.csv')
-    multistateReporter = atomsmm.ExtendedStateDataReporter(f'{base}_energy-{state:02d}.csv',
-        reportInterval, separator=',', step=True, globalParameterStates=parameterStates)
-    simulation.reporters = [dataReporter, multistateReporter]
-    simulation.step(steps_per_state)
+states_data = pd.read_csv(f'{base}.states', sep='\s+', comment='#')
+parameterStates = states_data[['lambda_vdw', 'lambda_coul']]
+simulate = states_data['simulate']
+for state in reversed(states_data.index):
+    if simulate.iloc[state] == 'yes':
+        for name, value in parameterStates.iloc[state].items():
+            simulation.context.setParameter(name, value)
+            print(f'{name} = {value}')
+        dataReporter = atomsmm.ExtendedStateDataReporter(stdout, reportInterval, separator=',',
+            step=True, potentialEnergy=True, temperature=True, density=barostatInterval > 0,
+            speed=True, extraFile=f'{base}_data-{state:02d}.csv')
+        multistateReporter = atomsmm.ExtendedStateDataReporter(f'{base}_energy-{state:02d}.csv',
+            reportInterval, separator=',', step=True, globalParameterStates=parameterStates)
+        simulation.reporters = [dataReporter, multistateReporter]
+        simulation.step(steps_per_state)
