@@ -1,0 +1,53 @@
+define molecule as  1,4-dioxane
+
+
+# Atom definitions:
+atom C1 c3 0.0905
+atom C2 c3 0.0905
+atom O1 os -0.4132
+atom C3 c3 0.0905
+atom C4 c3 0.0905
+atom O2 os -0.4132
+atom H1 h1 0.058
+atom H2 h1 0.058
+atom H3 h1 0.058
+atom H4 h1 0.058
+atom H5 h1 0.058
+atom H6 h1 0.058
+atom H7 h1 0.058
+atom H8 h1 0.058
+
+# Bond definitions:
+bond C1 O2
+bond C1 C2
+bond C2 O1
+bond O1 C3
+bond C3 C4
+bond C4 O2
+bond C1 H1
+bond C1 H2
+bond C2 H3
+bond C2 H4
+bond C3 H5
+bond C3 H6
+bond C4 H7
+bond C4 H8
+
+# Coordinates:
+build
+14
+
+C1 0.226 -0.915 -1.035
+C2 -0.105 0.547 -1.285
+O1 0.367 1.341 -0.194
+C3 -0.226 0.915 1.035
+C4 0.105 -0.547 1.285
+O2 -0.367 -1.341 0.193
+H1 1.31 -1.072 -0.976
+H2 -0.168 -1.541 -1.841
+H3 0.38 0.9 -2.2
+H4 -1.186 0.697 -1.387
+H5 0.168 1.541 1.841
+H6 -1.31 1.072 0.976
+H7 1.186 -0.697 1.387
+H8 -0.38 -0.9 2.2

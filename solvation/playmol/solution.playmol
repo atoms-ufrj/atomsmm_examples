@@ -1,0 +1,22 @@
+define  solvent as water
+define  solute  as 1,4-dioxane
+
+include TIP3P.mol
+include $solvent.mol
+
+include gaff.playmol
+include $solute.playmol
+
+define  name as $molecule-in-$solvent
+
+define  density as 1.0 # g/cm³
+define  N as 999
+box     density {0.602214*$density} # Da/Å³
+
+packmol retry 0.98 pack mol(C1) 1 pack mol(Ow) $N action execute
+
+write   lmp/models $name.lmp
+write   openmm $name.xml
+write   pdb ${name}.pdb
+
+write   summary

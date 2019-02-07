@@ -1,0 +1,18 @@
+atom_type   HW $LJ_H
+atom_type   OW $LJ_O
+
+mass        HW H
+mass        OW O
+
+bond_type   HW OW    $bond_OH
+angle_type  HW OW HW $angle_HOH
+
+diameter    HW 2.0
+diameter    OW 3.0
+
+atom        Ow  OW $qO
+atom        Hw1 HW $qH
+atom        Hw2 HW $qH
+
+bond        Ow  Hw1 Hw2
+
