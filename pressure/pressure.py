@@ -6,25 +6,28 @@ from sys import stdout
 
 temp = 300*unit.kelvin
 rigid_water = False
-platform_name = 'CUDA'
+simulation_platform = 'CUDA'
+pressure_computer_platform = 'CUDA'
 
 modeller = app.Modeller(app.Topology(), [])
 force_field = app.ForceField('tip3p.xml')
 modeller.addSolvent(force_field, numAdded=500)
 topology = modeller.getTopology()
-
 system = force_field.createSystem(topology, nonbondedMethod=app.PME, rigidWater=rigid_water)
+
+def platform(name):
+    return [openmm.Platform.getPlatformByName(name),
+            dict(Precision='mixed') if name == 'CUDA' else dict()]
+
 integrator = openmm.LangevinIntegrator(temp, 0.1/unit.femtoseconds, 1.0*unit.femtosecond)
-platform = openmm.Platform.getPlatformByName(platform_name)
-properties = dict(Precision = 'mixed') if platform_name == 'CUDA' else dict()
 system.addForce(openmm.MonteCarloBarostat(1*unit.atmospheres, temp, 20))
-simulation = app.Simulation(topology, system, integrator, platform, properties)
+simulation = app.Simulation(topology, system, integrator, *platform(simulation_platform))
 simulation.context.setPositions(modeller.getPositions())
 simulation.context.setVelocitiesToTemperature(temp)
 
-computer = atomsmm.PressureComputer(system, topology, platform)
-reporter = atomsmm.ExtendedStateDataReporter(stdout, 100, speed=True,
-    step=True, potentialEnergy=True, temperature=True, density=True,
+computer = atomsmm.PressureComputer(system, topology, *platform(pressure_computer_platform))
+reporter = atomsmm.ExtendedStateDataReporter(stdout, 100,
+    step=True, speed=True, potentialEnergy=True, temperature=True, density=True,
     atomicPressure=(not rigid_water),
     molecularPressure=True,
     pressureComputer=computer,
